@@ -1,0 +1,42 @@
+language: node_js
+
+node_js:
+  - "8"
+
+before_install:
+  - export TZ='Asia/Shanghai' # 更改时区
+
+# 依赖安装
+install:
+  - npm install gitbook-cli -g
+  # 安装 gitbook 插件
+  - gitbook install
+
+# 构建脚本
+script:
+    # 自定义输出目录 gitbook build src dest
+    # 默认会输出到 _book 目录下
+  - gitbook build .
+
+# 分支白名单
+branches:
+  only:
+    - master # 只对 master 分支进行构建
+
+before-deploy:
+- git config --local user.name "suveng"
+- git config --local user.email "suveng@163.com"
+
+# GitHub Pages 部署
+deploy:
+  provider: pages
+  skip_cleanup: true
+  github_token:
+    secure: ${GH_TOKEN}
+  # 将下面的目录中内容推送到 gh-pages 分支
+  local_dir: _book
+  fqdn: $CUSTOM_DOMAIN
+  name: $GIT_NAME
+  email: $GIT_EMAIL
+  on:
+    branch: master
