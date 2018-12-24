@@ -1,42 +1,64 @@
+sudo: required
 language: node_js
-
 node_js:
-  - "8"
-
+- stable
 before_install:
-  - export TZ='Asia/Shanghai' # 更改时区
-
-# 依赖安装
+- export TZ='Asia/Shanghai'
+- npm install gitbook-cli -g
+- npm install svgexport -g
+- gitbook fetch 3.2.3
+- sudo apt-get update -qq
+- sudo -v && wget --no-check-certificate -nv -O- https://raw.githubusercontent.com/kovidgoyal/calibre/master/setup/linux-installer.py
+  | sudo python -c "import sys; main=lambda:sys.stderr.write('Download failed\n');
+  exec(sys.stdin.read()); main()"
 install:
-  - npm install gitbook-cli -g
-  # 安装 gitbook 插件
-  - gitbook install
-
-# 构建脚本
+- gitbook install
+before_script:
+- mkdir -p ~/.fonts/noto
+- mkdir -p ~/raw_fonts/{NotoSans-unhinted,NotoSansCJKsc-hinted,NotoSansCJKtc-hinted}
+- wget -P ~/raw_fonts https://noto-website-2.storage.googleapis.com/pkgs/NotoSans-unhinted.zip
+- unzip ~/raw_fonts/NotoSans-unhinted.zip -d ~/raw_fonts/NotoSans-unhinted
+- wget -P ~/raw_fonts https://noto-website-2.storage.googleapis.com/pkgs/NotoSansCJKsc-hinted.zip
+- unzip ~/raw_fonts/NotoSansCJKsc-hinted.zip -d ~/raw_fonts/NotoSansCJKsc-hinted
+- wget -P ~/raw_fonts https://noto-website-2.storage.googleapis.com/pkgs/NotoSansCJKtc-hinted.zip
+- unzip ~/raw_fonts/NotoSansCJKtc-hinted.zip -d ~/raw_fonts/NotoSansCJKtc-hinted
 script:
-    # 自定义输出目录 gitbook build src dest
-    # 默认会输出到 _book 目录下
-  - gitbook build .
-
-# 分支白名单
+- mv -t ~/.fonts/noto ~/raw_fonts/NotoSansCJKsc-hinted/*-DemiLight.otf ~/raw_fonts/NotoSansCJKsc-hinted/*-Bold.otf
+  ~/raw_fonts/NotoSansCJKsc-hinted/*-Black.otf
+- sudo fc-cache -f -v
+- gitbook pdf .
+- gitbook epub .
+- gitbook mobi .
+- rm ~/.fonts/noto/*.otf
+- gitbook build .
 branches:
   only:
-    - master # 只对 master 分支进行构建
-
-before-deploy:
+  - master
+  - /^v\d+\.\d+\.\d+$/
+before_deploy:
 - git config --local user.name "suveng"
 - git config --local user.email "suveng@163.com"
-
-# GitHub Pages 部署
 deploy:
-  provider: pages
-  skip_cleanup: true
-  github_token:
-    secure: ${GH_TOKEN}
-  # 将下面的目录中内容推送到 gh-pages 分支
-  local_dir: _book
-  fqdn: $CUSTOM_DOMAIN
-  name: $GIT_NAME
-  email: $GIT_EMAIL
-  on:
-    branch: master
+  - provider: pages
+    skip_cleanup: true
+    local_dir: _book
+    name: suveng
+    email: suveng@163.com
+    verbose: true
+    on:
+      branch: master
+    github_token:
+      secure: RMuPvyD5RDeo5xRKh0I6DDPtD+u7mU6XqSRf96ePwho4scG529qHe7NEoUM754yPyKHz839sjhgJG3YqG6NpVrtNnZrDAcC7mnhnUxucNkalyEwxUX06LUckr3oWY4DMw/LcB7y54HIM8L9rjSXZO7EQZGk20lPQwS5mpGDh0kJYB+JWr+yRG9v5yYGB+ZdQyPK8c7QZwfwpDikBcwncR5dPAXoITAObhsW/W9of0y1YmYc+nG5VglkTDmTX/EJ5QUqRr47uSLqMPouagbNlRhvLdMXeIKCWuubs7AClGvJ+LdzJ7+g64blkYdGQWH4lK5ouEezi14/pAUAPQuk0ybsJstvDIWXNEmMtqy5p+BQqKwnGlDQLSlC5MLvNddlVaznH8Q8qNwdeScQM/WRwuE/9XbmkDaOUfl8MDSDsrUlGXLyr/QP6RN4j2zxBdwkRnukjcl0n8ZyMyf9jHLUY3VT9TJKZ4imPURjWHstfOVGKpSsH9E9JWSvzkL7vBIcj2/4KDJKRcKLsCmihz+0N7RyMCXhp3aZU45e/nmJ5OZcCnWlrOh9XCQjh2DDUv5xsMSlp3KhYkugvAZGcldlfA9rmagYvO6T6cJ3QZC4R3lKrWncmruakkKeoPRbcs4XlP/bXSsp8a0LgumTzM6MdyZmc/lZyhCJaQx+/Vr5Zqto=
+  - provider: releases
+    file:
+    - "book.epub"
+    - "book.mobi"
+    - "book.pdf"
+    skip_cleanup: true
+    overwrite: true
+    api_key:
+      secure: RMuPvyD5RDeo5xRKh0I6DDPtD+u7mU6XqSRf96ePwho4scG529qHe7NEoUM754yPyKHz839sjhgJG3YqG6NpVrtNnZrDAcC7mnhnUxucNkalyEwxUX06LUckr3oWY4DMw/LcB7y54HIM8L9rjSXZO7EQZGk20lPQwS5mpGDh0kJYB+JWr+yRG9v5yYGB+ZdQyPK8c7QZwfwpDikBcwncR5dPAXoITAObhsW/W9of0y1YmYc+nG5VglkTDmTX/EJ5QUqRr47uSLqMPouagbNlRhvLdMXeIKCWuubs7AClGvJ+LdzJ7+g64blkYdGQWH4lK5ouEezi14/pAUAPQuk0ybsJstvDIWXNEmMtqy5p+BQqKwnGlDQLSlC5MLvNddlVaznH8Q8qNwdeScQM/WRwuE/9XbmkDaOUfl8MDSDsrUlGXLyr/QP6RN4j2zxBdwkRnukjcl0n8ZyMyf9jHLUY3VT9TJKZ4imPURjWHstfOVGKpSsH9E9JWSvzkL7vBIcj2/4KDJKRcKLsCmihz+0N7RyMCXhp3aZU45e/nmJ5OZcCnWlrOh9XCQjh2DDUv5xsMSlp3KhYkugvAZGcldlfA9rmagYvO6T6cJ3QZC4R3lKrWncmruakkKeoPRbcs4XlP/bXSsp8a0LgumTzM6MdyZmc/lZyhCJaQx+/Vr5Zqto=
+    on:
+      tags: true
+after_success:
+- ls -lh
