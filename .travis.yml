@@ -48,7 +48,7 @@ deploy:
     on:
       branch: master
     github_token:
-      secure: RMuPvyD5RDeo5xRKh0I6DDPtD+u7mU6XqSRf96ePwho4scG529qHe7NEoUM754yPyKHz839sjhgJG3YqG6NpVrtNnZrDAcC7mnhnUxucNkalyEwxUX06LUckr3oWY4DMw/LcB7y54HIM8L9rjSXZO7EQZGk20lPQwS5mpGDh0kJYB+JWr+yRG9v5yYGB+ZdQyPK8c7QZwfwpDikBcwncR5dPAXoITAObhsW/W9of0y1YmYc+nG5VglkTDmTX/EJ5QUqRr47uSLqMPouagbNlRhvLdMXeIKCWuubs7AClGvJ+LdzJ7+g64blkYdGQWH4lK5ouEezi14/pAUAPQuk0ybsJstvDIWXNEmMtqy5p+BQqKwnGlDQLSlC5MLvNddlVaznH8Q8qNwdeScQM/WRwuE/9XbmkDaOUfl8MDSDsrUlGXLyr/QP6RN4j2zxBdwkRnukjcl0n8ZyMyf9jHLUY3VT9TJKZ4imPURjWHstfOVGKpSsH9E9JWSvzkL7vBIcj2/4KDJKRcKLsCmihz+0N7RyMCXhp3aZU45e/nmJ5OZcCnWlrOh9XCQjh2DDUv5xsMSlp3KhYkugvAZGcldlfA9rmagYvO6T6cJ3QZC4R3lKrWncmruakkKeoPRbcs4XlP/bXSsp8a0LgumTzM6MdyZmc/lZyhCJaQx+/Vr5Zqto=
+      secure: ${GH_TOKEN}
   - provider: releases
     file:
     - "book.epub"
@@ -57,7 +57,7 @@ deploy:
     skip_cleanup: true
     overwrite: true
     api_key:
-      secure: RMuPvyD5RDeo5xRKh0I6DDPtD+u7mU6XqSRf96ePwho4scG529qHe7NEoUM754yPyKHz839sjhgJG3YqG6NpVrtNnZrDAcC7mnhnUxucNkalyEwxUX06LUckr3oWY4DMw/LcB7y54HIM8L9rjSXZO7EQZGk20lPQwS5mpGDh0kJYB+JWr+yRG9v5yYGB+ZdQyPK8c7QZwfwpDikBcwncR5dPAXoITAObhsW/W9of0y1YmYc+nG5VglkTDmTX/EJ5QUqRr47uSLqMPouagbNlRhvLdMXeIKCWuubs7AClGvJ+LdzJ7+g64blkYdGQWH4lK5ouEezi14/pAUAPQuk0ybsJstvDIWXNEmMtqy5p+BQqKwnGlDQLSlC5MLvNddlVaznH8Q8qNwdeScQM/WRwuE/9XbmkDaOUfl8MDSDsrUlGXLyr/QP6RN4j2zxBdwkRnukjcl0n8ZyMyf9jHLUY3VT9TJKZ4imPURjWHstfOVGKpSsH9E9JWSvzkL7vBIcj2/4KDJKRcKLsCmihz+0N7RyMCXhp3aZU45e/nmJ5OZcCnWlrOh9XCQjh2DDUv5xsMSlp3KhYkugvAZGcldlfA9rmagYvO6T6cJ3QZC4R3lKrWncmruakkKeoPRbcs4XlP/bXSsp8a0LgumTzM6MdyZmc/lZyhCJaQx+/Vr5Zqto=
+      secure: ${GH_TOKEN}
     on:
       tags: true
 after_success:
